@@ -11,6 +11,8 @@ public class SpecialMachine {
     }
 
     public void nextState() { // finds next state from states and writes to tape
+        System.err.println(tape);
+
         int[] instruction = states[current_state][(int)tape.getValue()];
         tape.writeValue(tape.pointer, instruction[1]);
         if (instruction[2] == 0) {
@@ -45,7 +47,7 @@ public class SpecialMachine {
             {{5, 0, 0}, {5, 1, 0}, {6, 1, 1}}, // read a 1
             {{0, 2, 1}, {0, 2, 1}} // read a 1 // termination
         };
-        SpecialMachine shift_dec = new SpecialMachine("211111112", shift_dec_states, 1);
+        SpecialMachine shift_dec = new SpecialMachine("212", shift_dec_states, 1);
         long start = System.currentTimeMillis();   
         while (shift_dec.has_terminated() != true) {
             shift_dec.nextState();

@@ -14,7 +14,8 @@ public class NewTape {
 
         for (int i = 0; i < input.length(); i++){ // inputs starting sequence
             char c = input.charAt(i);        
-            writeValue(start, Long.valueOf(c) - Long.valueOf('0'));
+            writeValue(pointer, Long.valueOf(c) - Long.valueOf('0'));
+            moveRight();
         }
 
         setPointer(start);
@@ -44,40 +45,28 @@ public class NewTape {
         long current_high = ranges.get(current_range)[1];
         if (value != current_value) { 
             if (pointer == current_high && pointer == current_low) {
-                ranges.get(current_range)[2] = value;
+                ranges.set(current_range, new Long[]{pointer, pointer, value});
             } else if (pointer == current_high) { // right edge
-                // check for if it's the rightmost range, if it is then it's straightforward
-                if (current_high == pinf) {
-                    ranges.get(current_range)[1] = pointer - 1; // new left
-                    ranges.add(new Long[]{pointer, pointer, value}); // new middle
-                    ranges.add(new Long[]{pointer + 1, pinf, current_value}); // new right
-                    current_range++;
-                } else if (ranges.get(current_range + 1)[2] == value) { // if the thing to the right is the same thing, then merge
-                    ranges.get(current_range)[1]--;
-                    ranges.get(current_range + 1)[0]--;
+                if (ranges.get(current_range + 1)[2] == value) { // if the thing to the right is the same thing, then merge
+                    ranges.set(current_range, new Long[]{current_low, current_high - 1, current_value});
+                    ranges.set(current_range + 1, new Long[]{current_high, ranges.get(current_range + 1)[1], value});
                     current_range++;
                 } else { // make new range
-                    ranges.get(current_range)[1]--;
+                    ranges.set(current_range, new Long[]{current_low, current_high - 1, current_value});
                     ranges.add(current_range + 1, new Long[]{pointer, pointer, value});
                     current_range++;
                 }
             } else if (pointer == current_low) { // left edge
-                // check for if it's the leftmost range, if it is then it's straightforward
-                if (current_low == ninf) {
-                    ranges.get(current_range)[0] = pointer + 1; // new right
-                    ranges.add(new Long[]{pointer, pointer, value}); // new middle
-                    ranges.add(new Long[]{ninf, pointer - 1, current_value}); // new left
-                    current_range++;
-                } else if (ranges.get(current_range - 1)[2] == value) { // if the thing to the right is the same thing, then merge
-                    ranges.get(current_range - 1)[1]++;
-                    ranges.get(current_range)[0]++;
+                if (ranges.get(current_range - 1)[2] == value) { // if the thing to the right is the same thing, then merge
+                    ranges.set(current_range - 1, new Long[]{ranges.get(current_range - 1)[0], current_low, value});
+                    ranges.set(current_range, new Long[]{current_low + 1, current_high, current_value});
                     current_range--;
                 } else { // make new range
-                    ranges.get(current_range)[0]++;
+                    ranges.set(current_range, new Long[]{current_low + 1, current_high, current_value})[0]++;
                     ranges.add(current_range, new Long[]{pointer, pointer, value});
                 }
             } else { // middle insert |1| --> |new new 1|
-                ranges.get(current_range)[0] = pointer + 1; // new right
+                ranges.set(current_range, new Long[]{pointer + 1, current_high, current_value}); // new right
                 ranges.add(current_range, new Long[]{pointer, pointer, value}); // new middle
                 ranges.add(current_range, new Long[]{current_low, pointer - 1, current_value}); // new left
                 current_range++; // move one to the right
@@ -87,10 +76,21 @@ public class NewTape {
 
     public void setPointer(long value) {
         pointer = value;
+        current_range = 0;
+        while (pointer > ranges.get(current_range)[1]) {
+            current_range++;
+        }
     }
 
     public String toString() {
-        return ranges.toString();
+        String ret = "";
+        for (int i = 0; i < ranges.size(); i++) {
+            for (Long l: ranges.get(i)) {
+                ret += l.toString() + " ";
+            }
+            ret += " ";
+        }
+        return ret;
     }
 
     public long getSum() {
