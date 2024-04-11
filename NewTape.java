@@ -97,4 +97,14 @@ public class NewTape {
         return 0L;
     }
 
+    public long getScore() {
+        long total = 0;
+        for (int i = 0; i < ranges.size(); i++) {
+            if (ranges.get(i)[2] == 1L) {
+                total += (ranges.get(i)[1] - ranges.get(i)[0] + 1);
+            }
+        }
+        return total;
+    }
+
 }

@@ -67,4 +67,19 @@ public class Tape {
         return positive.stream().mapToInt(a -> a).sum() + negative.stream().mapToInt(a -> a).sum();
     }
 
+    public long getScore() {
+        long total = 0;
+        for (int i = 0; i < positive.size(); i++) {
+            if (positive.get(i) == 1) {
+                total += 1;
+            }
+        }
+        for (int i = 0; i < negative.size(); i++) {
+            if (negative.get(i) == 1) {
+                total += 1;
+            }
+        }
+        return total;
+    }
+
 }
