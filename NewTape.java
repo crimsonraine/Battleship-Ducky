@@ -8,13 +8,12 @@ public class NewTape {
     public long pointer;
     public int current_range = 0;
 
-    public NewTape(String input, long start) {
+    public NewTape(long[] input, long start) {
         Long[] everything = {ninf, pinf, 0L};
         ranges.add(everything);
 
-        for (int i = 0; i < input.length(); i++){ // inputs starting sequence
-            char c = input.charAt(i);        
-            writeValue(pointer, Long.valueOf(c) - Long.valueOf('0'));
+        for (long i: input){ // inputs starting sequence    
+            writeValue(i);
             moveRight();
         }
 
@@ -39,7 +38,7 @@ public class NewTape {
         pointer++;
     }
 
-    public void writeValue(long pointer, long value) { // writes the current value and updates the pointer, cases which are "finitely" close to pinf and ninf are not considered
+    public void writeValue(long value) { // writes the current value and updates the pointer, cases which are "finitely" close to pinf and ninf are not considered
         long current_value = ranges.get(current_range)[2];
         long current_low = ranges.get(current_range)[0];
         long current_high = ranges.get(current_range)[1];
