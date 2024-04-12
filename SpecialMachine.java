@@ -1,12 +1,12 @@
 public class SpecialMachine {
 
     private int[][][] states; // first layer maps indices to states, second layer maps states to their transitions, third layer is the transition (next state, what's being written, left/right/terminate)
-    private NewTape tape;
+    private LinkedTape tape;
     private int current_state = 0;
     private boolean has_terminated = false;
 
     public SpecialMachine(long[] input, int[][][] state, long start) {
-        tape = new NewTape(input, start);
+        tape = new LinkedTape(input, start);
         states = state;
         // System.err.println(tape);
         // System.err.println(tape.pointer);
@@ -37,24 +37,24 @@ public class SpecialMachine {
     }
 
     public static void main(String[] args) {
-        // int[][][] shift_dec_states = {
-        //     {{1, 0, 1}, {2, 0, 1}}, // s0
-        //     {{1, 0, 1}, {2, 0, 1}, {3, 0, 1}}, // read a 0
-        //     {{1, 1, 1}, {2, 1, 1}, {3, 1, 1}}, // read a 1
-        //     {{4, 2, 0}},
-        //     {{4, 1, 0}, {5, 0, 0}, {4, 1, 2}}, // s4
-        //     {{5, 0, 0}, {5, 1, 0}, {6, 1, 1}}, // read a 1
-        //     {{0, 2, 1}, {0, 2, 1}} // read a 1 // termination
-        // };
-        // SpecialMachine shift_dec = new SpecialMachine(new long[]{2, 1, 1, 1, 1, 1, 2}, shift_dec_states, 1);
-        // long start = System.currentTimeMillis();   
-        // while (shift_dec.has_terminated() != true) {
-        //     shift_dec.nextState();
-        // }
-        // long elapsedTimeMillis = System.currentTimeMillis()-start;
-        // System.err.println("Test shift and decrement: ");
-        // System.err.println(shift_dec.getScore());
-        // System.err.println(elapsedTimeMillis / 1000.0);
+        int[][][] shift_dec_states = {
+            {{1, 0, 1}, {2, 0, 1}}, // s0
+            {{1, 0, 1}, {2, 0, 1}, {3, 0, 1}}, // read a 0
+            {{1, 1, 1}, {2, 1, 1}, {3, 1, 1}}, // read a 1
+            {{4, 2, 0}},
+            {{4, 1, 0}, {5, 0, 0}, {4, 1, 2}}, // s4
+            {{5, 0, 0}, {5, 1, 0}, {6, 1, 1}}, // read a 1
+            {{0, 2, 1}, {0, 2, 1}} // read a 1 // termination
+        };
+        SpecialMachine shift_dec = new SpecialMachine(new long[]{2, 1, 1, 1, 1, 1, 2}, shift_dec_states, 1);
+        long start = System.currentTimeMillis();   
+        while (shift_dec.has_terminated() != true) {
+            shift_dec.nextState();
+        }
+        long elapsedTimeMillis = System.currentTimeMillis()-start;
+        System.err.println("Test shift and decrement: ");
+        System.err.println(shift_dec.getScore());
+        System.err.println(elapsedTimeMillis / 1000.0);
 
         // int[][][] base6_states = {
         //     // state 0
@@ -121,58 +121,58 @@ public class SpecialMachine {
         // System.err.println(base12.getScore() / (base12_states.length + input12.length + 13));
         // System.err.println(elapsedTimeMillis2 / 1000.0);
 
-        int N = 8;
-        int[][][] baseN_states = new int[N + 5][N + 1][3];
-        for (int i = 0; i < N; i++) {
-            baseN_states[0][i][0] = i + 1;
-            baseN_states[0][i][1] = 0;
-            baseN_states[0][i][2] = 1;
-        }
-        for (int i = 0; i < N; i++) { // range of N
-            for (int j = 1; j <= N + 1; j++) { // range of N + 1
-                baseN_states[i + 1][j - 1][0] = j;
-                baseN_states[i + 1][j - 1][1] = i;
-                baseN_states[i + 1][j - 1][2] = 1;
-            }
-        }
-        baseN_states[N + 1][0][0] = N + 2;
-        baseN_states[N + 1][0][1] = N;
-        baseN_states[N + 1][0][2] = 0;
-        baseN_states[N + 2][0][0] = N + 2;
-        baseN_states[N + 2][0][1] = N - 1;
-        baseN_states[N + 2][0][2] = 0;
-        baseN_states[N + 2][N][0] = N + 1;
-        baseN_states[N + 2][N][1] = 1;
-        baseN_states[N + 2][N][2] = 2;
-        for (int i = 1; i < N; i++) {
-            baseN_states[N + 2][i][0] = N + 3;
-            baseN_states[N + 2][i][1] = i - 1;
-            baseN_states[N + 2][i][2] = 0;
-        }
-        for (int i = 0; i < N; i++) {
-            baseN_states[N + 3][i][0] = N + 3;
-            baseN_states[N + 3][i][1] = i;
-            baseN_states[N + 3][i][2] = 0;
-        }
-        baseN_states[N + 3][N][0] = N + 4;
-        baseN_states[N + 3][N][1] = 1;
-        baseN_states[N + 3][N][2] = 1;
-        baseN_states[N + 4][0][0] = 0;
-        baseN_states[N + 4][0][1] = N;
-        baseN_states[N + 4][0][2] = 1;
-        baseN_states[N + 4][1][0] = 0;
-        baseN_states[N + 4][1][1] = N;
-        baseN_states[N + 4][1][2] = 1;
-        long[] inputN = new long[]{N, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N};
-        SpecialMachine baseN = new SpecialMachine(inputN, baseN_states, 1);
-        long startN = System.currentTimeMillis();   
-        while (baseN.has_terminated() != true) {
-            baseN.nextState();
-        }
-        long elapsedTimeMillisN = System.currentTimeMillis()-startN;
-        System.err.println("Test baseN: ");
-        System.err.println(baseN.getScore() / (baseN_states.length + inputN.length + N + 1));
-        System.err.println(elapsedTimeMillisN / 1000.0);
+        // int N = 8;
+        // int[][][] baseN_states = new int[N + 5][N + 1][3];
+        // for (int i = 0; i < N; i++) {
+        //     baseN_states[0][i][0] = i + 1;
+        //     baseN_states[0][i][1] = 0;
+        //     baseN_states[0][i][2] = 1;
+        // }
+        // for (int i = 0; i < N; i++) { // range of N
+        //     for (int j = 1; j <= N + 1; j++) { // range of N + 1
+        //         baseN_states[i + 1][j - 1][0] = j;
+        //         baseN_states[i + 1][j - 1][1] = i;
+        //         baseN_states[i + 1][j - 1][2] = 1;
+        //     }
+        // }
+        // baseN_states[N + 1][0][0] = N + 2;
+        // baseN_states[N + 1][0][1] = N;
+        // baseN_states[N + 1][0][2] = 0;
+        // baseN_states[N + 2][0][0] = N + 2;
+        // baseN_states[N + 2][0][1] = N - 1;
+        // baseN_states[N + 2][0][2] = 0;
+        // baseN_states[N + 2][N][0] = N + 1;
+        // baseN_states[N + 2][N][1] = 1;
+        // baseN_states[N + 2][N][2] = 2;
+        // for (int i = 1; i < N; i++) {
+        //     baseN_states[N + 2][i][0] = N + 3;
+        //     baseN_states[N + 2][i][1] = i - 1;
+        //     baseN_states[N + 2][i][2] = 0;
+        // }
+        // for (int i = 0; i < N; i++) {
+        //     baseN_states[N + 3][i][0] = N + 3;
+        //     baseN_states[N + 3][i][1] = i;
+        //     baseN_states[N + 3][i][2] = 0;
+        // }
+        // baseN_states[N + 3][N][0] = N + 4;
+        // baseN_states[N + 3][N][1] = 1;
+        // baseN_states[N + 3][N][2] = 1;
+        // baseN_states[N + 4][0][0] = 0;
+        // baseN_states[N + 4][0][1] = N;
+        // baseN_states[N + 4][0][2] = 1;
+        // baseN_states[N + 4][1][0] = 0;
+        // baseN_states[N + 4][1][1] = N;
+        // baseN_states[N + 4][1][2] = 1;
+        // long[] inputN = new long[]{N, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N};
+        // SpecialMachine baseN = new SpecialMachine(inputN, baseN_states, 1);
+        // long startN = System.currentTimeMillis();   
+        // while (baseN.has_terminated() != true) {
+        //     baseN.nextState();
+        // }
+        // long elapsedTimeMillisN = System.currentTimeMillis()-startN;
+        // System.err.println("Test baseN: ");
+        // System.err.println(baseN.getScore() / (baseN_states.length + inputN.length + N + 1));
+        // System.err.println(elapsedTimeMillisN / 1000.0);
         // System.err.println(baseN.getScore() / (baseN_states.length + inputN.length + N + 1) / (elapsedTimeMillisN / 1000.0) * 60);
     }
 }

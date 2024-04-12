@@ -6,7 +6,7 @@ public class LinkedTape {
     long pointer;
 
     public LinkedTape(long[] input, long start) {
-        LinkedCell everything = null;
+        LinkedCell everything = new LinkedCell(Long.MIN_VALUE, Long.MAX_VALUE, 0, head, tail);
         head = everything;
         tail = everything;
 
@@ -94,11 +94,10 @@ public class LinkedTape {
                     current_cell = current_cell.next; // moves into new cell
                 }
             } else { // middle insert |1| --> |new new 1|
-                current_cell.low = pointer + 1; // overwrite current to be new right
-                current_cell = current_cell.prev; // move to left
-                insert(new LinkedCell(pointer, pointer, new_value, current_cell, current_cell.next)); // new middle
-                insert(new LinkedCell(current_cell.high + 1, pointer - 1, current_cell.next.next.value, current_cell, current_cell.next)); // new left
-                current_cell = current_cell.next; // move one to the right
+                long temp_high = current_cell.high;
+                current_cell.high = pointer - 1; // overwrite current to be new left
+                insert(new LinkedCell(pointer + 1, temp_high, current_cell.value, current_cell, current_cell.next)); // new right
+                insert(new LinkedCell(current_cell.high + 1, pointer - 1, current_cell.next.next.value, current_cell, current_cell.next)); // new middle
                 current_cell = current_cell.next; // move one to the right
             }
         }
