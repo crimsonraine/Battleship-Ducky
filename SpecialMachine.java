@@ -8,11 +8,10 @@ public class SpecialMachine {
     public SpecialMachine(String input, int[][][] state, long start) {
         tape = new NewTape(input, start);
         states = state;
+        // System.err.println(tape);
     }
 
     public void nextState() { // finds next state from states and writes to tape
-        System.err.println(tape);
-
         int[] instruction = states[current_state][(int)tape.getValue()];
         tape.writeValue(tape.pointer, instruction[1]);
         if (instruction[2] == 0) {
@@ -24,14 +23,15 @@ public class SpecialMachine {
         } else {
             has_terminated = true;
         }
+        // System.err.println(tape);
     }
 
     public boolean has_terminated() {
         return has_terminated;
     }
 
-    public long getSum() {
-        return tape.getSum();
+    public long getScore() {
+        return tape.getScore();
     }
 
     public static void main(String[] args) {
@@ -47,14 +47,14 @@ public class SpecialMachine {
             {{5, 0, 0}, {5, 1, 0}, {6, 1, 1}}, // read a 1
             {{0, 2, 1}, {0, 2, 1}} // read a 1 // termination
         };
-        SpecialMachine shift_dec = new SpecialMachine("212", shift_dec_states, 1);
+        SpecialMachine shift_dec = new SpecialMachine("2111111111111111111111112", shift_dec_states, 1);
         long start = System.currentTimeMillis();   
         while (shift_dec.has_terminated() != true) {
             shift_dec.nextState();
         }
         long elapsedTimeMillis = System.currentTimeMillis()-start;
         System.err.println("Test shift and decrement: ");
-        System.err.println(shift_dec.getSum());
+        System.err.println(shift_dec.getScore());
         System.err.println(elapsedTimeMillis / 1000.0);
     }
 }

@@ -39,13 +39,27 @@ public class NewTape {
         pointer++;
     }
 
-    public void writeValue(long pointer, long value) { // writes the current value and updates the pointer
+    public void writeValue(long pointer, long value) { // writes the current value and updates the pointer, cases which are "finitely" close to pinf and ninf are not considered
         long current_value = ranges.get(current_range)[2];
         long current_low = ranges.get(current_range)[0];
         long current_high = ranges.get(current_range)[1];
         if (value != current_value) { 
-            if (pointer == current_high && pointer == current_low) {
-                ranges.set(current_range, new Long[]{pointer, pointer, value});
+            if (pointer == current_high && pointer == current_low) { // singleton case: check if shares value with left/right/both/neither, in theory guarenteed to be not on pinf and ninf
+                if (ranges.get(current_range - 1)[2] == value && ranges.get(current_range + 1)[2] == value) { // same on both sides
+                    ranges.set(current_range - 1, new Long[]{ranges.get(current_range - 1)[0], ranges.get(current_range + 1)[1], value}); // edits left
+                    ranges.remove(current_range); // removes middle
+                    ranges.remove(current_range); // removes right
+                    current_range--;
+                } else if (ranges.get(current_range + 1)[2] == value) { // same on right edge
+                    ranges.set(current_range + 1, new Long[]{pointer, ranges.get(current_range + 1)[1], value});
+                    ranges.remove(current_range);
+                } else if (ranges.get(current_range - 1)[2] == value) { // same on left edge
+                    ranges.set(current_range - 1, new Long[]{ranges.get(current_range - 1)[0], pointer, value});
+                    ranges.remove(current_range);
+                    current_range--;
+                } else { // different both sides
+                    ranges.set(current_range, new Long[]{pointer, pointer, value});
+                }
             } else if (pointer == current_high) { // right edge
                 if (ranges.get(current_range + 1)[2] == value) { // if the thing to the right is the same thing, then merge
                     ranges.set(current_range, new Long[]{current_low, current_high - 1, current_value});
@@ -86,15 +100,17 @@ public class NewTape {
         String ret = "";
         for (int i = 0; i < ranges.size(); i++) {
             for (Long l: ranges.get(i)) {
-                ret += l.toString() + " ";
+                if (l.longValue() == ninf) {
+                    ret += "ninf ";
+                } else if (l.longValue() == pinf) {
+                    ret += "pinf ";
+                } else {
+                    ret += l.toString() + " ";
+                }
             }
             ret += " ";
         }
         return ret;
-    }
-
-    public long getSum() {
-        return 0L;
     }
 
     public long getScore() {
