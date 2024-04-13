@@ -1,14 +1,15 @@
 public class LinkedTape {
 
-    LinkedCell head;
-    LinkedCell tail;
-    LinkedCell current_cell = head;
+    LinkedCell head = new LinkedCell(Long.MIN_VALUE, Long.MIN_VALUE, 0, null, null);
+    LinkedCell tail = new LinkedCell(Long.MAX_VALUE, Long.MAX_VALUE, 0, null, null);
+    LinkedCell current_cell;
     long pointer;
 
     public LinkedTape(long[] input, long start) {
         LinkedCell everything = new LinkedCell(Long.MIN_VALUE, Long.MAX_VALUE, 0, head, tail);
-        head = everything;
-        tail = everything;
+        head.next = everything;
+        tail.prev = everything;
+        current_cell = everything;
 
         for (long i: input){ // inputs starting sequence    
             writeValue(i);
@@ -17,7 +18,7 @@ public class LinkedTape {
 
         pointer = start;
         current_cell = head; // finds the starting cell
-        while (pointer > current_cell.value) {
+        while (pointer > current_cell.high) {
             current_cell = current_cell.next;
         }
     }
@@ -97,7 +98,7 @@ public class LinkedTape {
                 long temp_high = current_cell.high;
                 current_cell.high = pointer - 1; // overwrite current to be new left
                 insert(new LinkedCell(pointer + 1, temp_high, current_cell.value, current_cell, current_cell.next)); // new right
-                insert(new LinkedCell(current_cell.high + 1, pointer - 1, current_cell.next.next.value, current_cell, current_cell.next)); // new middle
+                insert(new LinkedCell(pointer, pointer, new_value, current_cell, current_cell.next)); // new middle
                 current_cell = current_cell.next; // move one to the right
             }
         }
@@ -107,7 +108,7 @@ public class LinkedTape {
         String ret = "";
         LinkedCell counter = head;
         while (counter != tail) {
-            ret += counter.value;
+            ret += counter.low + "-->" + counter.high + "=" + counter.value + " ";
             counter = counter.next;
         }
         ret += counter.value;
@@ -119,7 +120,7 @@ public class LinkedTape {
         LinkedCell counter = head;
         while (counter != tail) {
             if (counter.value == 1) {
-                total += counter.value;
+                total += counter.value * (counter.high - counter.low + 1);
             }
             counter = counter.next;
         }
