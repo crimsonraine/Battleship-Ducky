@@ -121,7 +121,7 @@ public class SpecialMachine {
         // System.err.println(base12.getScore() / (base12_states.length + input12.length + 13));
         // System.err.println(elapsedTimeMillis2 / 1000.0);
 
-        int N = 10;
+        int N = 9;
         int[][][] baseN_states = new int[N + 5][N + 1][3];
         for (int i = 0; i < N; i++) {
             baseN_states[0][i][0] = i + 1;
@@ -163,7 +163,7 @@ public class SpecialMachine {
         baseN_states[N + 4][1][0] = 0;
         baseN_states[N + 4][1][1] = N;
         baseN_states[N + 4][1][2] = 1;
-        long[] inputN = new long[]{N, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N};
+        long[] inputN = new long[]{N, N-4, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N-1, N};
         SpecialMachine baseN = new SpecialMachine(inputN, baseN_states, 1);
         long startN = System.currentTimeMillis();   
         while (baseN.has_terminated() != true) {
@@ -172,7 +172,7 @@ public class SpecialMachine {
         long elapsedTimeMillisN = System.currentTimeMillis()-startN;
         System.err.println("Test baseN: ");
         System.err.println(baseN.getScore() / (baseN_states.length + inputN.length + N + 1));
-        System.err.println(elapsedTimeMillisN / 1000.0);
+        System.err.println(elapsedTimeMillisN / 60000.0 );
         // System.err.println(baseN.getScore() / (baseN_states.length + inputN.length + N + 1) / (elapsedTimeMillisN / 1000.0) * 60);
     }
 }
