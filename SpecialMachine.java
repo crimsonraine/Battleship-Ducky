@@ -37,7 +37,7 @@ public class SpecialMachine {
     }
 
     public static void main(String[] args) {
-    //     int[][][] shift_dec_states = {
+    //     int[][][] shift_dec_states = { // draw this one
     //         {{1, 0, 1}, {2, 0, 1}}, // s0
     //         {{1, 0, 1}, {2, 0, 1}, {3, 0, 1}}, // read a 0
     //         {{1, 1, 1}, {2, 1, 1}, {3, 1, 1}}, // read a 1
@@ -121,7 +121,7 @@ public class SpecialMachine {
         // System.err.println(base12.getScore() / (base12_states.length + input12.length + 13));
         // System.err.println(elapsedTimeMillis2 / 1000.0);
 
-        int N = 9;
+        int N = 9; // how big thing scales
         int[][][] baseN_states = new int[N + 5][N + 1][3];
         for (int i = 0; i < N; i++) {
             baseN_states[0][i][0] = i + 1;
